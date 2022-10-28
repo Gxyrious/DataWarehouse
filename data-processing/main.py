@@ -43,10 +43,10 @@ if __name__ == "__main__":
     # 日期标准化
     for attr in ('release_date', 'first_available_date'):
         movies_info[attr] = movies_info[attr].apply(date_cleaner)
-    write_csv_data(movies_info, write_path)
 
     # 合并相同电影
     movies_info = movie_merge(movies_info)
 
-    # # 写csv数据
+    # 写csv数据
+    write_csv_data(movies_info, write_path)
     

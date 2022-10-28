@@ -4,11 +4,10 @@ from datetime import datetime
 
 def value_cleaner(movies_info: pd.DataFrame):
     movies_info.fillna(value='', inplace=True)
-    for attr in movies_info.attrs:
+    for attr in ('title', 'genre', 'actor', 'director', 'format', 'language', 'release_date', 'first_available_date', 'run_time'):
         movies_info[attr] = remove_special_characters(movies_info[attr])
 
     return movies_info
-
 
 def convert_to_list(list_str: str):
     new_list = list(map(lambda list_str: list_str.strip(), list_str.split(',')))
