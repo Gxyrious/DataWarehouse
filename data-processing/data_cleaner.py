@@ -22,7 +22,7 @@ def date_cleaner(date_str: str):
         date_str = '{}-00-00'.format(date_str)
     else:
         try:
-            locale.setlocale(locale.LC_ALL, 'en_us')
+            locale.setlocale(locale.LC_ALL, 'en_US.utf8')
             date_str = str(datetime.strptime(date_str, '%B %d, %Y').date())
         except Exception as error:
             print(error)
@@ -46,12 +46,10 @@ def runtime_cleaner(runtime: str):
                 if alphas and numbers:
                     alphas = alphas.group()
                     numbers = int(numbers.group())
-                    if 'min' in alphas:
-                        minute = numbers
-                    elif 'h' in alphas:
-                        hour = numbers
-                    elif 'sec' in alphas:
-                        second = numbers
+                    minute = numbers if 'min' in alphas else 0
+                    hour = numbers if 'h' in alphas else 0
+                    second = numbers if 'sec' in alphas else 0
+                        
     except Exception as error:
         # print(runtime)
         pass

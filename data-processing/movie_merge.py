@@ -70,6 +70,6 @@ def movie_merge(movies_info: pd.DataFrame):
             new_df = pd.DataFrame(new_series_dict, index=[index])
             data_related_table = pd.concat([data_related_table, new_df])
         
-    data_related_table.to_csv("/Users/lc2002/Documents/2022-1/homework/DataWarehouse/movies-information/related.csv")
+    data_related_table.to_csv("../movies-information/related.csv")
     # log_file.close()
     return movies_info.drop(index=waiting_delete_list)
