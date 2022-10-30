@@ -39,6 +39,9 @@ if __name__ == "__main__":
     # 转换为list
     for attr in ('genre', 'actor', 'director', 'format', 'language'):
         movies_info[attr] = movies_info[attr].apply(convert_to_list)
+    
+    # 处理相同演员
+    movies_info  = merge_people_name(movies_info)
 
     # 日期标准化
     for attr in ('release_date', 'first_available_date'):
