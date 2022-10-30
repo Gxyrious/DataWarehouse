@@ -117,9 +117,9 @@
 
   下面是一个典型并且出现频率最高的页面结构[B00006HAXW](http://amazon.com/-/en/dp/B00006HAXW/)。
 
-  ![product-demo-3](https://gxyrious.oss-cn-hangzhou.aliyuncs.com/img/tj-3-1/product-demo-3.png)
+  ![product-demo-3](./resource/product-demo-3.png)
   
-  ![product-demo-2](https://gxyrious.oss-cn-hangzhou.aliyuncs.com/img/tj-3-1/product-demo-2.png)
+  ![product-demo-2](./resource/product-demo-2.png)
   
   可以发现，主要的信息集中在红色框选中的区域，因此我们对该区域的页面进行解析。比如解析标题，我们查看页面源码，找到标题所在的元素，发现是个span标签：
   
@@ -159,7 +159,7 @@
   
   保存得到的csv文件如下所示：
   
-  ![demo-csv](https://gxyrious.oss-cn-hangzhou.aliyuncs.com/img/tj-3-1/demo-csv.png)
+  ![demo-csv](./resource/demo-csv.png)
 
 ## 数据清洗
 > 对于爬虫得到的源数据，可以发现十分杂乱，还有很多对应的是健身操、音乐歌曲等产品，因此需要对筛选内容、调整格式。
@@ -376,6 +376,29 @@ def date_cleaner(date_str: str):
 
      类似影名，选择运行时间更长的，并更新血缘关系表。
 
+### 第三方数据源
+
+当有相关数据在亚马逊无法爬取获得时，我们需要寻找第三方数据源进行补充，这里我主要采用来自imdb作为数据源的补充。
+
+在[https://imdb-api.com/swagger/index.html](https://imdb-api.com/swagger/index.html)中提供了对IMDB数据的查找API，在注册账号后就可以免费获取apiKey，通过该apiKey便可以调用其提供的api。我主要采用了两个api，如下所示：（我的apiKey=k_fjhihha0）
+
+```python
+if pd.isna(row['release_date']):
+    url1 = 'https://imdb-api.com/API/SearchMovie/k_fjhihha0/' + title
+    response = requests.get(url1) # 第一个
+    res_json = json.loads(response.text)
+    movie_id = res_json.get('results')[0].get('id')
+    url2 = 'https://imdb-api.com/en/API/Title/k_fjhihha0/' + movie_id
+    response = requests.get(url2) # 第二个
+    movie_json = json.loads(response.text)
+    release_date = movie_json.get('releaseDate')
+    new_series_dict['release_date'] = url2
+    movies_info.loc[index, 'release_date'] = release_date
+```
+
+1. 第一个api是通过电影名查找匹配的电影，并获取这些电影的标识符id等信息，组成列表。若某些信息在亚马逊不存在，则使用影名去调用该api，以获取电影标识符，再进一步通过下面的api获取电影信息。
+2. 第二个api是通过电影标识符id查找该电影的详细信息，上述代码中，我获取了放映日期这个信息，作为原来数据源的补充。
+
 ### 处理相同姓名（演员、导演）
 
 相同姓名的处理类似合并电影名，设置一个空的姓名列表，并遍历所有的演员、导演名，由于导演和演员之间可能存在交叉，因此两者共用一个姓名列表。对于某一个姓名，查询它在姓名列表中的匹配率，如果评分大于95分，则将该名称进行替换；否则就将其加入新的姓名列表。并且可以新建一个姓名表并设置主键索引，将主表中的演员、导演字段替换为姓名表的外键，从而减少主表查询的负担。
@@ -386,7 +409,7 @@ def date_cleaner(date_str: str):
 
    在电影的评论中，一共有25w+条数据，在爬虫后剔除了一些失效页面后，还剩下24w+条数据，经过电影产品的筛选、相同电影的合并，最终剩下10w+电影产品。
 
-![Screen Shot 2022-10-30 at 22.43.48](https://gxyrious.oss-cn-hangzhou.aliyuncs.com/img/tj-3-1/Screen%20Shot%202022-10-30%20at%2022.43.48.png)
+![](./resource/movie_info_list.png)
 
 相比其他同学的结果，我最终剩余的数量偏少，在查看了合并日志(merge_log.txt)后，即如下：
 
@@ -460,4 +483,4 @@ Ship Ahoy ==? Ship Ahoy
    在合并的过程中，记录了每个字段的来源，如亚马逊、豆瓣、IMDB等。如果有多个来源，则将其用逗号隔开。这张表的主键为电影名。通过电影名的合并，每个影名都是唯一的标识符，考虑到查询的速度，后续会将其用数字id代替。
 
 
-![Screen Shot 2022-10-30 at 22.59.20](https://gxyrious.oss-cn-hangzhou.aliyuncs.com/img/tj-3-1/Screen%20Shot%202022-10-30%20at%2022.59.20.png)
+![](./resource/related_info.png)
