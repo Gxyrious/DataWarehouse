@@ -1,3 +1,8 @@
+
+'''
+    从爬取的html文件中获取电影信息
+'''
+
 import os
 from bs4 import BeautifulSoup
 from required_function import *
@@ -66,9 +71,6 @@ def write_info_to_file(target_list, path):
 if __name__ == "__main__":
     root_path = "/Volumes/bGxyrious/DW/WebPages"
     write_path = "/Users/lc2002/Documents/2022-1/homework/DataWarehouse/crawler/movies-info/movies-0w-24w.csv"
-    # movies_info_list = get_info_from_html("/Users/lc2002/Documents/2022-1/homework/DataWarehouse/crawler/html")
     movies_info_list = get_info_from_html(root_path, start=0, end=239999)
 
     write_info_to_file(movies_info_list, write_path)
-    
-    

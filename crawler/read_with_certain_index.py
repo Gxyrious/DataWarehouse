@@ -1,11 +1,16 @@
+
+'''
+    单线程爬取start<=index<=end的网页
+'''
+
 import os
 import numpy as np
 from amazoncaptcha import AmazonCaptcha
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
-
 def read_with_certain_index(start, end, save_path):
+    # 爬取[start, end]范围的网页
     productId_list = np.load('productId_list.npy')
     driver = webdriver.Safari()
     for index in range(start, end + 1):
@@ -15,7 +20,6 @@ def read_with_certain_index(start, end, save_path):
 
         page_source = driver.page_source # 获取页面源代码
         
-        # 5.获取验证码
         try:
             soup = BeautifulSoup(page_source)
             img_src = soup.find(class_="a-row a-text-center").findChild(name="img").attrs["src"]
