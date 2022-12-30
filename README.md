@@ -1,6 +1,20 @@
 # DataWarehouse
 
-数据仓库文档，本项目地址：[https://github.com/Gxyrious/DataWarehouse](https://github.com/Gxyrious/DataWarehouse)
+- 数据仓库文档，本项目关于数据爬取和处理：
+
+  ```sh
+  # 爬虫
+  $ cd crawler
+  $ python read_start_end.py
+  
+  # 数据处理
+  $ cd data-processing
+  $ python main.py
+  ```
+
+- 最终项目前端：https://github.com/Baokker/data-warehouse-frontend
+
+- 最终项目后端：https://github.com/Gxyrious/data-warehouse-backend
 
 ## 数据爬取
 
